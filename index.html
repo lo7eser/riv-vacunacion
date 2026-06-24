@@ -274,12 +274,54 @@
             background: #c0392b;
         }
 
+        /* ------- Enlaces de interés ------- */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .link-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px 20px;
+            border: 1px solid #eef2f7;
+            transition: all 0.2s;
+        }
+        .link-card:hover {
+            background: #eaf4ff;
+            border-color: #1a4f7a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 79, 122, 0.1);
+        }
+        .link-card a {
+            text-decoration: none;
+            color: #0a2f5a;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .link-card a:hover {
+            color: #1a4f7a;
+        }
+        .link-card .link-icon {
+            font-size: 1.3rem;
+        }
+        .link-card .link-desc {
+            font-size: 0.85rem;
+            color: #4a5b6e;
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
         /* ------- Responsive ------- */
         @media (max-width: 700px) {
             .header { flex-direction: column; align-items: start; gap: 10px; }
             .form-row { grid-template-columns: 1fr; }
             .nav-tabs button { padding: 10px 15px; font-size: 0.85rem; }
             .panel { padding: 20px; }
+            .links-grid { grid-template-columns: 1fr; }
         }
 
         /* ------- Mockups visuales adicionales ------- */
@@ -379,13 +421,25 @@
             </div>
         </div>
 
-        <!-- Feed de Interconectividad (sharing entre centros) -->
+        <!-- Feed de Interconectividad -->
         <div class="section-title" style="margin-top:30px;">
             <h3>📡 <strong>Alertas y Noticias</strong> compartidas entre Centros</h3>
             <button class="btn btn-secondary" id="btnGenerarAlerta">+ Generar Alerta</button>
         </div>
         <div class="feed" id="feedInterconectividad">
             <!-- Los items se generan con JS -->
+        </div>
+
+        <!-- ========================================== -->
+        <!-- NUEVA SECCIÓN: ENLACES DE INTERÉS           -->
+        <!-- ========================================== -->
+        <div class="section-title" style="margin-top:40px; border-top: 2px solid #eef2f7; padding-top:30px;">
+            <h3>🔗 <strong>Enlaces de Interés</strong> · Centros de Salud y Hospitales</h3>
+        </div>
+        <p style="color:#4a5b6e; margin-bottom:15px;">Recursos oficiales del Sistema de Salud Mexicano para consulta de unidades médicas, hospitales e infraestructura hospitalaria.</p>
+        
+        <div class="links-grid" id="linksGrid">
+            <!-- Los enlaces se generan con JS -->
         </div>
     </section>
 
@@ -552,6 +606,72 @@
 
 <script>
     // ============================================================
+    //  DATOS DE ENLACES DE INTERÉS (10 recursos oficiales)
+    // ============================================================
+    const ENLACES_SALUD = [
+        {
+            nombre: 'Directorio de Hospitales y Centros de Salud (PDF)',
+            url: 'https://sersalud.cdmx.gob.mx/portalut/archivo/Art121FVIII/Directorio-Hospitales-y-Centros-Salud.pdf',
+            icono: '📄',
+            descripcion: 'Directorio completo de unidades médicas de la CDMX'
+        },
+        {
+            nombre: 'Unidades Médicas - Servicios de Salud CDMX',
+            url: 'https://sersalud.cdmx.gob.mx/sspcdmx/unidades_medicas.php',
+            icono: '🏥',
+            descripcion: 'Consulta de unidades médicas en la Ciudad de México'
+        },
+        {
+            nombre: 'Hospital General de México - Unidades',
+            url: 'https://hgm.salud.gob.mx/interna/unidades/unidades.html',
+            icono: '🏛️',
+            descripcion: 'Directorio de unidades del Hospital General de México'
+        },
+        {
+            nombre: 'Secretaría de Salud - Directorio Nacional',
+            url: 'https://www.gob.mx/salud/documentos/directorio-de-hospitales-y-unidades-medicas',
+            icono: '📋',
+            descripcion: 'Directorio nacional de unidades médicas de la SSa'
+        },
+        {
+            nombre: 'IMSS - Directorio de Unidades Médicas',
+            url: 'http://www.imss.gob.mx/unidades-medicas',
+            icono: '🏥',
+            descripcion: 'Consulta de clínicas y hospitales del IMSS'
+        },
+        {
+            nombre: 'ISSSTE - Directorio de Clínicas y Hospitales',
+            url: 'https://www.gob.mx/issste/acciones-y-programas/directorio-de-clinicas-y-hospitales',
+            icono: '🏛️',
+            descripcion: 'Directorio de unidades médicas del ISSSTE'
+        },
+        {
+            nombre: 'SEDENA - Hospitales Militares',
+            url: 'https://www.gob.mx/sedena/acciones-y-programas/hospitales-militares',
+            icono: '🏥',
+            descripcion: 'Directorio de hospitales del Sistema Militar de Salud'
+        },
+        {
+            nombre: 'SEMAR - Unidades Médicas Navales',
+            url: 'https://www.gob.mx/semar/acciones-y-programas/directorio-de-unidades-medicas-navales',
+            icono: '⚓',
+            descripcion: 'Directorio de unidades médicas de la Marina'
+        },
+        {
+            nombre: 'PEMEX - Servicios Médicos',
+            url: 'https://www.pemex.com/salud/Paginas/default.aspx',
+            icono: '🛢️',
+            descripcion: 'Servicios médicos de Petróleos Mexicanos'
+        },
+        {
+            nombre: 'Infraestructura Hospitalaria - CONAMED',
+            url: 'https://www.gob.mx/conamed/documentos/directorio-de-establecimientos-de-salud',
+            icono: '🏗️',
+            descripcion: 'Directorio de establecimientos de salud a nivel nacional'
+        }
+    ];
+
+    // ============================================================
     //  MODELO DE DATOS (Simula una base de datos en la nube)
     // ============================================================
     const DB = {
@@ -584,6 +704,7 @@
         actualizarPanelFarmaco();
         actualizarTablaPacientes();
         actualizarFeed();
+        actualizarEnlaces();
     }
 
     // --- PANEL INTERCONECTIVIDAD ---
@@ -687,16 +808,32 @@
         });
     }
 
+    // --- ENLACES DE INTERÉS ---
+    function actualizarEnlaces() {
+        const container = document.getElementById('linksGrid');
+        container.innerHTML = '';
+        ENLACES_SALUD.forEach(enlace => {
+            const div = document.createElement('div');
+            div.className = 'link-card';
+            div.innerHTML = `
+                <a href="${enlace.url}" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">${enlace.icono}</span>
+                    <span>${enlace.nombre}</span>
+                </a>
+                <div class="link-desc">${enlace.descripcion}</div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
     // ============================================================
     //  NAVEGACIÓN ENTRE PANELES
     // ============================================================
     document.querySelectorAll('.nav-tabs button').forEach(button => {
         button.addEventListener('click', function() {
-            // Remover active de todos los botones y paneles
             document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             
-            // Activar el panel seleccionado
             this.classList.add('active');
             const panelId = this.getAttribute('data-panel');
             document.getElementById(panelId).classList.add('active');
@@ -727,7 +864,6 @@
             return;
         }
 
-        // Verificar duplicado
         if (DB.ciudadanos.find(c => c.curp === curp)) {
             msgDiv.textContent = '⚠️ Este CURP ya está registrado.';
             msgDiv.style.color = '#e67e22';
@@ -739,7 +875,6 @@
         msgDiv.style.color = '#27ae60';
         this.reset();
         
-        // Generar alerta de nuevo registro (interconectividad)
         DB.alertas.push({ 
             mensaje: `Nuevo registro: ${nombre} (${edad} años) se ha registrado en el sistema. ${necesidad !== 'ninguna' ? 'Requiere atención especial: ' + necesidad : ''}`, 
             fecha: new Date().toLocaleString() 
@@ -793,7 +928,6 @@
             fecha: new Date().toLocaleDateString()
         });
         
-        // Alerta compartida
         DB.alertas.push({ 
             mensaje: `Nuevo efecto secundario reportado: "${sintoma}" para CURP ${curp.substring(0,4)}****.`, 
             fecha: new Date().toLocaleString() 
@@ -824,7 +958,6 @@
         msgDiv.textContent = `✅ ${pendiente.nombre} ha sido atendido exitosamente.`;
         msgDiv.style.color = '#27ae60';
         
-        // Registrar en el feed
         DB.alertas.push({ 
             mensaje: `Paciente ${pendiente.nombre} ha sido vacunado en el centro.`, 
             fecha: new Date().toLocaleString() 
@@ -840,7 +973,6 @@
         msgDiv.textContent = `♻️ Se agregaron ${peso} kg de residuos. Total: ${DB.residuosTotales.toFixed(1)} kg`;
         msgDiv.style.color = '#e67e22';
         
-        // Registrar en el feed
         DB.alertas.push({ 
             mensaje: `Centro reporta ${peso} kg adicionales de residuos. Total acumulado: ${DB.residuosTotales.toFixed(1)} kg.`, 
             fecha: new Date().toLocaleString() 
@@ -876,7 +1008,6 @@
         const alerta = alertas[Math.floor(Math.random() * alertas.length)];
         DB.alertas.push({ mensaje: alerta, fecha: new Date().toLocaleString() });
         
-        // También agregar un efecto secundario simulado
         const sintomas = ['Fiebre alta', 'Dolor de cabeza intenso', 'Reacción alérgica', 'Fatiga extrema', 'Dolor muscular'];
         const curps = ['GODE901010HDFRLR09', 'RUSE920202MDFRLR02', 'PIEC880303HDFRLR03', 'LOEE850404HDFRLR04'];
         DB.efectos.push({
